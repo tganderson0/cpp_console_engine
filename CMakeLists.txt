@@ -7,6 +7,8 @@ project(cpp_engine)
 set(HEADER_FILES
 	GameObject.hpp
 	Physics.hpp
+	Input.hpp
+	Renderer.hpp
 	)
 
 #
@@ -15,6 +17,8 @@ set(HEADER_FILES
 set(SOURCE_FILES
 	GameObject.cpp
 	Physics.cpp
+	Input.cpp
+	Renderer.cpp
 	)
 
 

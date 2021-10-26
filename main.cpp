@@ -1,4 +1,5 @@
 #include "GameObject.hpp"
+#include "Input.hpp"
 #include "Physics.hpp"
 #include "rlutil.h"
 #include <iostream>
@@ -13,71 +14,40 @@ void render(std::shared_ptr<std::vector<GameObject>> gameObjects,
             bool &running);
 
 int main() {
+
   rlutil::hidecursor();
 
+  // Create the GameObjects pointer
   std::shared_ptr<std::vector<GameObject>> gameObjects =
       std::make_shared<std::vector<GameObject>>();
   *(gameObjects) = std::vector<GameObject>(0);
 
+  // The boolean that controls it all
   bool running = true;
-  GameObject player(5, 5, 'o', 1, 1);
+
+  // Adding in a player
+  GameObject player(5, 5, 'o', 3, 3);
   (gameObjects)->push_back(player);
 
   // Create physics controller
   std::shared_ptr<Physics> physicsController =
-      std::make_shared<Physics>(gameObjects, 2);
+      std::make_shared<Physics>(gameObjects, 4);
 
-  // Start input thread
+  // Create player controller
+  std::shared_ptr<Input> playerInput =
+      std::make_shared<Input>(std::ref((gameObjects)->at(0)));
 
+  // Start threads
   std::thread physics(&Physics::update, physicsController, std::ref(running));
 
-  std::thread input(input_thread, std::ref(gameObjects.get()->at(0)),
-                    std::ref(running));
+  std::thread input(&Input::getInput, playerInput, std::ref(running));
   std::thread renderer(render, gameObjects, std::ref(running));
 
   input.join();
   renderer.join();
+  physics.join();
 
   return 0;
-}
-
-/*
- * The thread that is in change of taking input
- * @param player The GameObject referring to the player
- * @param running The boolean that is updated when the game should stop running
- */
-void input_thread(GameObject &player, bool &running) {
-
-  while (running) {
-    int input = rlutil::getkey();
-
-    if (input == rlutil::KEY_ESCAPE) {
-      std::cout << "leaving game" << std::endl;
-      running = false;
-      return; // exits game
-    }
-
-    rlutil::locate(1, 1);
-    std::cout << "Pushed: " << input;
-    // Move character
-
-    if (input == rlutil::KEY_UP) {
-      player.setY(player.getY() - 1);
-    }
-    if (input == rlutil::KEY_DOWN) {
-      player.setY(player.getY() + 1);
-    }
-    if (input == rlutil::KEY_LEFT) {
-      player.setX(player.getX() - 1);
-    }
-    if (input == rlutil::KEY_RIGHT) {
-      player.setX(player.getX() + 1);
-    }
-    if (input == rlutil::KEY_SPACE) {
-      player.velocityX = 5;
-      player.velocityY = 10;
-    }
-  }
 }
 
 /*
