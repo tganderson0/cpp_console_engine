@@ -5,7 +5,8 @@ project(cpp_engine)
 # Manually specifying all the header files.
 #
 set(HEADER_FILES
-	GameObject.hpp	
+	GameObject.hpp
+	Physics.hpp
 	)
 
 #
@@ -13,6 +14,7 @@ set(HEADER_FILES
 #
 set(SOURCE_FILES
 	GameObject.cpp
+	Physics.cpp
 	)
 
 

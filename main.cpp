@@ -1,4 +1,5 @@
 #include "GameObject.hpp"
+#include "Physics.hpp"
 #include "rlutil.h"
 #include <iostream>
 #include <memory>
@@ -6,8 +7,6 @@
 #include <string>
 #include <thread>
 #include <vector>
-
-std::mutex playerMutex;
 
 void input_thread(GameObject &player, bool &running);
 void render(std::shared_ptr<std::vector<GameObject>> gameObjects,
@@ -18,10 +17,20 @@ int main() {
 
   std::shared_ptr<std::vector<GameObject>> gameObjects =
       std::make_shared<std::vector<GameObject>>();
+  *(gameObjects) = std::vector<GameObject>(0);
+
   bool running = true;
-  (gameObjects)->push_back(GameObject(5, 5, 'o'));
+  GameObject player(5, 5, 'o', 1, 1);
+  (gameObjects)->push_back(player);
+
+  // Create physics controller
+  std::shared_ptr<Physics> physicsController =
+      std::make_shared<Physics>(gameObjects, 2);
 
   // Start input thread
+
+  std::thread physics(&Physics::update, physicsController, std::ref(running));
+
   std::thread input(input_thread, std::ref(gameObjects.get()->at(0)),
                     std::ref(running));
   std::thread renderer(render, gameObjects, std::ref(running));
@@ -32,6 +41,11 @@ int main() {
   return 0;
 }
 
+/*
+ * The thread that is in change of taking input
+ * @param player The GameObject referring to the player
+ * @param running The boolean that is updated when the game should stop running
+ */
 void input_thread(GameObject &player, bool &running) {
 
   while (running) {
@@ -47,39 +61,31 @@ void input_thread(GameObject &player, bool &running) {
     std::cout << "Pushed: " << input;
     // Move character
 
-    playerMutex.lock(); // Wait until the player is not being modified
     if (input == rlutil::KEY_UP) {
-      player.m_y -= 1;
+      player.setY(player.getY() - 1);
     }
     if (input == rlutil::KEY_DOWN) {
-      player.m_y += 1;
+      player.setY(player.getY() + 1);
     }
     if (input == rlutil::KEY_LEFT) {
-      player.m_x -= 1;
+      player.setX(player.getX() - 1);
     }
     if (input == rlutil::KEY_RIGHT) {
-      player.m_x += 1;
+      player.setX(player.getX() + 1);
     }
-
-    // Perform checks
-    int screenX = rlutil::tcols();
-    int screenY = rlutil::trows();
-    if (player.m_x < 0) {
-      player.m_x = 0;
+    if (input == rlutil::KEY_SPACE) {
+      player.velocityX = 5;
+      player.velocityY = 10;
     }
-    if (player.m_x > screenX - 2) {
-      player.m_x = screenX - 2;
-    }
-    if (player.m_y < 0) {
-      player.m_y = 0;
-    }
-    if (player.m_y > screenY - 1) {
-      player.m_y = screenY - 1;
-    }
-    playerMutex.unlock(); // We are done modifying the player
   }
 }
 
+/*
+ * Thread that renders the map using the vector of GameObjects
+ * @param gameObjects The shared pointer containing the list of gameObjects
+ * @param running The boolean that controls if the program should be currently
+ * running
+ */
 void render(std::shared_ptr<std::vector<GameObject>> gameObjects,
             bool &running) {
   // To start off, we should create an empty map
@@ -101,12 +107,22 @@ void render(std::shared_ptr<std::vector<GameObject>> gameObjects,
           std::string(rlutil::tcols() - 1, ' ')); // Add an empty map to start
     }
 
-    playerMutex.lock(); // We are updating the player, this should wait
     // Update the map
-    for (auto gameObject : *gameObjects) {
-      map.at(gameObject.m_y).at(gameObject.m_x) =
-          gameObject.m_repr; // Change it to the new state
-      playerMutex.unlock();  // Unlock after the first
+
+    for (auto &gameObject : *gameObjects) {
+      int x = static_cast<int>(gameObject.getX());
+      int y = static_cast<int>(gameObject.getY());
+      for (int row = 0; row < gameObject.getHeight(); row++) {
+        for (int col = 0; col < gameObject.getWidth(); col++) {
+          if (x + col >= 0 && x + col < rlutil::tcols() - 1 && y + row >= 0 &&
+              y + row <
+                  rlutil::trows() -
+                      1) { // make sure the object is in the valid render space
+            map.at(y + row).at(x + col) =
+                gameObject.repr; // Change it to the new state
+          }
+        }
+      }
     }
 
     // Update only in the changed locations, to make it less laggy
