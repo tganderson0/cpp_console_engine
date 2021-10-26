@@ -5,7 +5,7 @@
 
 class Physics {
 public:
-  Physics(std::shared_ptr<std::vector<GameObject>>, int = 10);
+  Physics(std::shared_ptr<std::vector<GameObject>>, int = 5);
   void update(bool &running);
 
 private:

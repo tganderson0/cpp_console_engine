@@ -32,8 +32,8 @@ void Renderer::render(bool &running) {
     // Update the map
 
     for (auto &gameObject : *m_gameObjects) {
-      int x = static_cast<int>(gameObject.getX());
-      int y = static_cast<int>(gameObject.getY());
+      long x = static_cast<long>(gameObject.getX());
+      long y = static_cast<long>(gameObject.getY());
       for (int row = 0; row < gameObject.getHeight(); row++) {
         for (int col = 0; col < gameObject.getWidth(); col++) {
           if (x + col >= 0 && x + col < rlutil::tcols() - 1 && y + row >= 0 &&
@@ -48,8 +48,8 @@ void Renderer::render(bool &running) {
     }
 
     // Update only in the changed locations, to make it less laggy
-    for (decltype(map.size()) row = 0; row < map.size(); row++) {
-      for (decltype(map.size()) col = 0; col < map.at(row).size(); col++) {
+    for (int row = 0; row < static_cast<int>(map.size()); row++) {
+      for (int col = 0; col < static_cast<int>(map.at(row).size()); col++) {
         if (map.at(row).at(col) != old_map.at(row).at(col)) {
           rlutil::locate(col + 1, row + 1);
           rlutil::setChar(map.at(row).at(col));

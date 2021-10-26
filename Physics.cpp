@@ -1,6 +1,7 @@
 #include "Physics.hpp"
 #include "GameObject.hpp"
 #include "rlutil.h"
+#include <math.h>
 #include <thread>
 
 Physics::Physics(std::shared_ptr<std::vector<GameObject>> gameObjects,
@@ -22,7 +23,7 @@ void Physics::update(bool &running) {
     while (std::chrono::duration_cast<std::chrono::milliseconds>(newPoint -
                                                                  m_lastTime)
                .count() < refreshRateMs) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
       newPoint = std::chrono::steady_clock::now();
     }
 

@@ -40,6 +40,9 @@ set_property(TARGET engine PROPERTY CXX_STANDARD 20)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	target_compile_options(engine PRIVATE /W4 /permissive-)  #/WX will treat warnings as errors
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	set(THREADS_PREFER_PTHREAD_FLAG ON)
+	find_package(Threads REQUIRED)
+	target_link_libraries(engine PRIVATE Threads::Threads)
 	target_compile_options(engine PRIVATE -Wall -Wextra -pedantic -O3) # -Wconversion -Wsign-conversion
 endif()
 

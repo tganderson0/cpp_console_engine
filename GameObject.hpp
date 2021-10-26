@@ -3,7 +3,7 @@
 class GameObject {
 
 public:
-  GameObject(int x, int y, char repr, int width = 1, int height = 1,
+  GameObject(float x, float y, char repr, int width = 1, int height = 1,
              bool gravity = true, int weight = 1);
   GameObject(const GameObject &);
   GameObject();

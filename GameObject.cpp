@@ -2,7 +2,7 @@
 #include <chrono>
 
 // repr is the character representation of the gameobject
-GameObject::GameObject(int x, int y, char repr, int width, int height,
+GameObject::GameObject(float x, float y, char repr, int width, int height,
                        bool gravity, int weight)
     : m_x(x), m_y(y), repr(repr), access(), m_width(width), m_height(height),
       gravityAffects(gravity), weight(weight), accelerationX(0.0),
