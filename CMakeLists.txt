@@ -5,13 +5,14 @@ project(cpp_engine)
 # Manually specifying all the header files.
 #
 set(HEADER_FILES
-	
+	GameObject.hpp	
 	)
 
 #
 # Manually specifying all the source files.
 #
 set(SOURCE_FILES
+	GameObject.cpp
 	)
 
 
