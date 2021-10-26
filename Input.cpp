@@ -20,7 +20,6 @@ void Input::getInput(bool &running) {
 
     if (input == rlutil::KEY_UP) {
       m_player.velocityY = 10.0f;
-      m_player.velocityX = 0;
     }
     if (input == rlutil::KEY_LEFT) {
       if (m_player.velocityX > 0) {
@@ -38,7 +37,6 @@ void Input::getInput(bool &running) {
     }
     if (input == rlutil::KEY_SPACE) {
       m_player.velocityY = 10.0f;
-      m_player.velocityX = 0;
     }
   }
 }
