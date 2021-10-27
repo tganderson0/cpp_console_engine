@@ -12,7 +12,7 @@ private:
   std::shared_ptr<std::vector<GameObject>> m_gameObjects;
   int m_gravity;
   std::chrono::steady_clock::time_point m_lastTime;
-  const int refreshRateMs = 10;
+  const int refreshRateMs = 5;
   const float timeRate = 1.0f;
   void validPlacement(GameObject &gameObject);
 };

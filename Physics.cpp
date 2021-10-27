@@ -96,22 +96,33 @@ void Physics::validPlacement(GameObject &gameObject) {
         bool onOrUnder = ((myRight >= oLeft && myRight <= oRight) ||
                           (myLeft <= oRight && myLeft >= oLeft));
         if (gameObject.velocityY < 0 && onOrUnder) { // Collision falling down
-          gameObject.setY(oTop - gameObject.getHeight());
+          gameObject.setY(static_cast<float>(oTop - gameObject.getHeight()));
           gameObject.velocityY = 0;
         } else if (gameObject.velocityY > 0 &&
                    onOrUnder) { // Collision going upwards
-          gameObject.setY(oBottom - 1);
+          gameObject.setY(static_cast<float>(oBottom + 1));
           gameObject.velocityY = 0;
+        }
+      } else if ((myBottom <= oBottom && myTop >= oTop) &&
+                     ((myLeft >= oLeft && myLeft <= oRight)) ||
+                 (myRight >= oLeft &&
+                  myRight <= oRight)) { // Complete side collision, no top
+        if (myRight < oRight) {         // Collision gameObject going right
+          gameObject.setX(static_cast<float>(oLeft - gameObject.getWidth()));
+          gameObject.velocityX = 0;
+        } else if (myLeft > oLeft) { // Collision gameObject going left
+          gameObject.setX(static_cast<float>(oRight + 1));
+          gameObject.velocityX = 0;
         }
       } else if ((myRight >= oLeft && myRight <= oRight) ||
                  (myLeft <= oRight && myLeft >= oLeft)) {
         // Handling Horizontal Collisions
         if (gameObject.velocityX > 0) { // Collision gameObject going right
-          gameObject.setX(oLeft - gameObject.getWidth());
+          gameObject.setX(static_cast<float>(oLeft - gameObject.getWidth()));
           gameObject.velocityX = 0;
         } else if (gameObject.velocityX <
                    0) { // Collision gameObject going left
-          gameObject.setX(oRight + 1);
+          gameObject.setX(static_cast<float>(oRight + 1));
           gameObject.velocityX = 0;
         }
         myLeft = static_cast<int>(gameObject.getX());
@@ -119,11 +130,11 @@ void Physics::validPlacement(GameObject &gameObject) {
         bool onOrUnder = ((myRight >= oLeft && myRight <= oRight) ||
                           (myLeft <= oRight && myLeft >= oLeft));
         if (gameObject.velocityY < 0 && onOrUnder) { // Collision falling down
-          gameObject.setY(oTop - gameObject.getHeight());
+          gameObject.setY(static_cast<float>(oTop - gameObject.getHeight()));
           gameObject.velocityY = 0;
         } else if (gameObject.velocityY > 0 &&
                    onOrUnder) { // Collision going upwards
-          gameObject.setY(oBottom - 1);
+          gameObject.setY(static_cast<float>(oBottom + 1));
           gameObject.velocityY = 0;
         }
       }

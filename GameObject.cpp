@@ -1,5 +1,4 @@
 #include "GameObject.hpp"
-#include <chrono>
 
 // repr is the character representation of the gameobject
 GameObject::GameObject(float x, float y, char repr, int width, int height,

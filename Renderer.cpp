@@ -10,6 +10,8 @@ Renderer::Renderer(std::shared_ptr<std::vector<GameObject>> gameObjects)
  * running
  */
 void Renderer::render(bool &running) {
+  rlutil::hidecursor();
+  rlutil::cls();
   // To start off, we should create an empty map
   std::vector<std::string> map;
   for (decltype(rlutil::trows()) i = 0; i < rlutil::trows(); i++) {
@@ -57,4 +59,5 @@ void Renderer::render(bool &running) {
       }
     }
   }
+  rlutil::showcursor();
 }

@@ -12,9 +12,6 @@ std::vector<GameObject> createObjects();
 
 int main() {
 
-  rlutil::hidecursor();
-  rlutil::cls();
-
   // Create the GameObjects pointer
   std::shared_ptr<std::vector<GameObject>> gameObjects =
       std::make_shared<std::vector<GameObject>>();
@@ -25,7 +22,7 @@ int main() {
 
   // Create physics controller
   std::shared_ptr<Physics> physicsController =
-      std::make_shared<Physics>(gameObjects, 9.8f);
+      std::make_shared<Physics>(gameObjects, 20.0f);
 
   // Create player controller
   std::shared_ptr<Input> playerInput =
@@ -56,8 +53,6 @@ int main() {
   renderThread.join();
   physicsThread.join();
 
-  rlutil::showcursor();
-
   return 0;
 }
 
@@ -67,12 +62,29 @@ int main() {
 std::vector<GameObject> createObjects() {
   std::vector<GameObject> gameObjects;
 
-  GameObject player(5.0f, 5.0f, char(219), 3, 3, true, 1, "player1");
+  GameObject player(5.0f, 5.0f, static_cast<char>(219), 1, 2, true, 1,
+                    "player1");
   gameObjects.push_back(player);
 
   GameObject floor(0.0f, static_cast<float>(rlutil::trows() - 2), char(178),
                    static_cast<float>(rlutil::tcols()), 5, false, 100, "floor");
   gameObjects.push_back(floor);
+
+  GameObject platform(20.0f, 20.0f, static_cast<char>(178), 5.0f, 2.0f, false,
+                      100, "floor");
+  gameObjects.push_back(platform);
+
+  GameObject platform2(0.0f, 15.0f, static_cast<char>(178), 10.0f, 2.0f, false,
+                       100, "floor");
+  gameObjects.push_back(platform2);
+
+  GameObject platform3(30.0f, 22.0f, static_cast<char>(178), 15.0f, 4.0f, false,
+                       100, "floor");
+  gameObjects.push_back(platform3);
+
+  GameObject platform4(45.0f, 20.0f, static_cast<char>(234), 35.0f, 2.0f, false,
+                       100, "floor");
+  gameObjects.push_back(platform4);
 
   return gameObjects;
 }

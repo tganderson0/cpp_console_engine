@@ -2,6 +2,7 @@
 
 Input::Input(GameObject &player) : m_player(player) {}
 
+const float horizontalSpeed = 15.0f;
 /*
  * The thread that is in change of taking input
  * @param running The boolean that is updated when the game should stop running
@@ -25,14 +26,14 @@ void Input::getInput(bool &running) {
       if (m_player.velocityX > 0) {
         m_player.velocityX = 0.0f;
       } else {
-        m_player.velocityX = -10.0f;
+        m_player.velocityX = -1 * horizontalSpeed;
       }
     }
     if (input == rlutil::KEY_RIGHT) {
       if (m_player.velocityX < 0) {
         m_player.velocityX = 0.0f;
       } else {
-        m_player.velocityX = 10.0f;
+        m_player.velocityX = horizontalSpeed;
       }
     }
     if (input == rlutil::KEY_SPACE) {
