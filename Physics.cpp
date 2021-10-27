@@ -33,6 +33,7 @@ void Physics::update(bool &running) {
                              newPoint - m_lastTime)
                              .count()) /
                      1000000;
+    deltaTime *= timeRate;
     m_lastTime = newPoint;
 
     // Perform updates on all gameObjects that are affected by gravity (need to
@@ -48,18 +49,83 @@ void Physics::update(bool &running) {
                          (0.5f * (m_gravity - gameObject.accelerationY) *
                           powf(deltaTime, 2))));
         gameObject.velocityY = gameObject.velocityY - (deltaTime * m_gravity);
-        ;
 
         // Update x position and velocity
         gameObject.setX(gameObject.getX() + (gameObject.velocityX * deltaTime));
         gameObject.velocityX =
             gameObject.velocityX + (gameObject.accelerationX * deltaTime);
+        validPlacement(gameObject);
       }
+    }
+  }
+}
 
-      // So we don't fall through the bottom of the screen
-      if (gameObject.getY() + gameObject.getHeight() >= rlutil::trows() - 2) {
-        gameObject.velocityY = 0.0f;
-        gameObject.setY(rlutil::trows() - 2.0f - gameObject.getHeight());
+/*
+ * Checks if the move was valid. Fixes positioning if it was not
+ * @param gameObject The object that is being checked
+ */
+void Physics::validPlacement(GameObject &gameObject) {
+  for (GameObject &other : *m_gameObjects) {
+    if (other.tag == gameObject.tag && gameObject.tag != "none") {
+      continue;
+    }
+
+    /*
+     * A note on all these casts to integers, this is because the console is
+     * only whole numbers. While the 'real' position of the objects can be
+     * floats the collisions are done based on what a player would see.
+     */
+    int myTop = static_cast<int>(gameObject.getY());
+    int myBottom = static_cast<int>(myTop + gameObject.getHeight() - 1);
+    int myLeft = static_cast<int>(gameObject.getX());
+    int myRight = static_cast<int>(myLeft + gameObject.getWidth() - 1);
+
+    int oTop = static_cast<int>(other.getY());
+    int oBottom = static_cast<int>(oTop + other.getHeight() - 1);
+    int oLeft = static_cast<int>(other.getX());
+    int oRight = static_cast<int>(oLeft + other.getWidth() - 1);
+
+    // First we should check if we are completely contained
+
+    if ((myTop >= oTop && myTop <= oBottom) ||
+        (myBottom <= oBottom && myBottom >= oTop)) {
+
+      if ((myRight <= oRight) &&
+          (myLeft >= oLeft)) { // We are completely contained, so we should just
+                               // move up or down
+        bool onOrUnder = ((myRight >= oLeft && myRight <= oRight) ||
+                          (myLeft <= oRight && myLeft >= oLeft));
+        if (gameObject.velocityY < 0 && onOrUnder) { // Collision falling down
+          gameObject.setY(oTop - gameObject.getHeight());
+          gameObject.velocityY = 0;
+        } else if (gameObject.velocityY > 0 &&
+                   onOrUnder) { // Collision going upwards
+          gameObject.setY(oBottom - 1);
+          gameObject.velocityY = 0;
+        }
+      } else if ((myRight >= oLeft && myRight <= oRight) ||
+                 (myLeft <= oRight && myLeft >= oLeft)) {
+        // Handling Horizontal Collisions
+        if (gameObject.velocityX > 0) { // Collision gameObject going right
+          gameObject.setX(oLeft - gameObject.getWidth());
+          gameObject.velocityX = 0;
+        } else if (gameObject.velocityX <
+                   0) { // Collision gameObject going left
+          gameObject.setX(oRight + 1);
+          gameObject.velocityX = 0;
+        }
+        myLeft = static_cast<int>(gameObject.getX());
+        myRight = static_cast<int>(myLeft + gameObject.getWidth() - 1);
+        bool onOrUnder = ((myRight >= oLeft && myRight <= oRight) ||
+                          (myLeft <= oRight && myLeft >= oLeft));
+        if (gameObject.velocityY < 0 && onOrUnder) { // Collision falling down
+          gameObject.setY(oTop - gameObject.getHeight());
+          gameObject.velocityY = 0;
+        } else if (gameObject.velocityY > 0 &&
+                   onOrUnder) { // Collision going upwards
+          gameObject.setY(oBottom - 1);
+          gameObject.velocityY = 0;
+        }
       }
     }
   }

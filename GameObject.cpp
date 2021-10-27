@@ -3,22 +3,22 @@
 
 // repr is the character representation of the gameobject
 GameObject::GameObject(float x, float y, char repr, int width, int height,
-                       bool gravity, int weight)
+                       bool gravity, int weight, std::string tag)
     : m_x(x), m_y(y), repr(repr), access(), m_width(width), m_height(height),
       gravityAffects(gravity), weight(weight), accelerationX(0.0),
-      accelerationY(0.0), velocityX(0.0), velocityY(0.0) {}
+      accelerationY(0.0), velocityX(0.0), velocityY(0.0), tag(tag) {}
 
 GameObject::GameObject(const GameObject &other)
     : m_x(other.m_x), m_y(other.m_y), repr(other.repr), access(),
       m_width(other.m_width), m_height(other.m_height),
       gravityAffects(other.gravityAffects), weight(other.weight),
       accelerationX(other.accelerationX), accelerationY(other.accelerationY),
-      velocityX(other.velocityX), velocityY(other.velocityY) {}
+      velocityX(other.velocityX), velocityY(other.velocityY), tag(other.tag) {}
 
 GameObject::GameObject()
     : m_x(0.0), m_y(0.0), repr(' '), access(), m_width(0), m_height(0),
       gravityAffects(true), weight(1), accelerationX(0.0), accelerationY(0.0),
-      velocityX(0.0), velocityY(0.0) {}
+      velocityX(0.0), velocityY(0.0), tag("none") {}
 
 float GameObject::getX() {
   std::lock_guard<std::mutex> lock(access);
