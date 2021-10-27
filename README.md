@@ -2,7 +2,7 @@
 
 This is just a very simple game engine that is console based. I am using the rlutil library to draw on the console.
 
-![screen-gif] (./example.gif)
+![example gif](./example.gif "Example of Program Running")
 
 ## Features
 
